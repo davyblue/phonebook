@@ -43,11 +43,14 @@ int main(int argc, char *argv[])
     printf("size of entry : %lu bytes\n", sizeof(entry));
     e = pHead;
     e->pNext = NULL;*/
-    nameEntry *pHead, *e;
+    int tableSize = 42737;
+    hashTable *ht = createHashTable(tableSize);
+    printf("hash table size (prime number) : %d\n", tableSize);
+    nameEntry *pHead;//, *e;
     pHead = (nameEntry *) malloc(sizeof(nameEntry));
     printf("size of entry : %lu bytes\n", sizeof(nameEntry));
-    e = pHead;
-    e->pNext = NULL;
+    //e = pHead;
+    //e->pNext = NULL;
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(nameEntry));
@@ -58,7 +61,9 @@ int main(int argc, char *argv[])
             i++;
         line[i - 1] = '\0';
         i = 0;
-        e = newAppend(line, e);
+        if(appendHash(line, ht) == 2){
+	    printf("append data fail!");
+	}
     }
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time1 = diff_in_second(start, end);
@@ -66,27 +71,26 @@ int main(int argc, char *argv[])
     /* close file as soon as possible */
     fclose(fp);
 
-    e = pHead;
+    //e = pHead;
 
     /* the givn last name to find */
     char input[MAX_LAST_NAME_SIZE] = "zyxel";
-    e = pHead;
+    //e = pHead;
 
-    assert(newFindName(input, e) &&
+    assert(findNameHash(input, ht) &&
            "Did you implement findName() in " IMPL "?");
-    assert(0 == strcmp(newFindName(input, e)->lastName, "zyxel"));
+    assert(0 == strcmp(findNameHash(input, ht)->lastName, "zyxel"));
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(nameEntry));
 #endif
     /* compute the execution time */
     clock_gettime(CLOCK_REALTIME, &start);
-    newFindName(input, e);
+    findNameHash(input, ht);
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time2 = diff_in_second(start, end);
-
-    printf("execution time of append() : %lf sec\n", cpu_time1);
-    printf("execution time of findName() : %lf sec\n", cpu_time2);
+    printf("execution time of appendHash() : %lf sec\n", cpu_time1);
+    printf("execution time of findNameHash() : %lf micro sec\n", cpu_time2*1000);
     printf("pid = %d\n" , getpid());
 
     /* FIXME: release all allocated entries */

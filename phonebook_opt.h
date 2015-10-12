@@ -17,7 +17,7 @@ typedef struct __PHONE_BOOK_ENTRY {
     char zip[5];
     struct __PHONE_BOOK_ENTRY *pNext;
 } entry;
-
+/*new smaller entey for recording lastname only*/
 typedef struct __NAME_ENTRY {
     char lastName[MAX_LAST_NAME_SIZE];
     entry* data;
@@ -26,8 +26,20 @@ typedef struct __NAME_ENTRY {
 
 entry *findName(char lastname[], entry *pHead);
 entry *append(char lastName[], entry *e);
+
+/*functions for new entry*/
 nameEntry *newFindName(char lastname[], nameEntry *pHead);
 nameEntry *newAppend(char lastName[], nameEntry *e);
 
+/*hast table*/
+typedef unsigned int hi;/*hash index*/
+typedef struct __NAME_HASH_TABLE {
+    unsigned int tableSize;  /* the size of the table */
+    nameEntry **list;  /* the table elements */
+} hashTable;
 
+hashTable *createHashTable(int tableSize);
+nameEntry* findNameHash(char *key, hashTable *ht);
+int appendHash(char *key, hashTable *ht);
+hi hash(char *key, hashTable *ht);
 #endif
