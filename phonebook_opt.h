@@ -18,7 +18,16 @@ typedef struct __PHONE_BOOK_ENTRY {
     struct __PHONE_BOOK_ENTRY *pNext;
 } entry;
 
+typedef struct __NAME_ENTRY {
+    char lastName[MAX_LAST_NAME_SIZE];
+    entry* data;
+    struct __NAME_ENTRY *pNext;
+} nameEntry;
+
 entry *findName(char lastname[], entry *pHead);
 entry *append(char lastName[], entry *e);
+nameEntry *newFindName(char lastname[], nameEntry *pHead);
+nameEntry *newAppend(char lastName[], nameEntry *e);
+
 
 #endif

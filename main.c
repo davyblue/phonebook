@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <time.h>
 #include <assert.h>
 
@@ -37,14 +38,19 @@ int main(int argc, char *argv[])
     }
 
     /* build the entry */
-    entry *pHead, *e;
+    /*entry *pHead, *e;
     pHead = (entry *) malloc(sizeof(entry));
     printf("size of entry : %lu bytes\n", sizeof(entry));
+    e = pHead;
+    e->pNext = NULL;*/
+    nameEntry *pHead, *e;
+    pHead = (nameEntry *) malloc(sizeof(nameEntry));
+    printf("size of entry : %lu bytes\n", sizeof(nameEntry));
     e = pHead;
     e->pNext = NULL;
 
 #if defined(__GNUC__)
-    __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
+    __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(nameEntry));
 #endif
     clock_gettime(CLOCK_REALTIME, &start);
     while (fgets(line, sizeof(line), fp)) {
@@ -52,7 +58,7 @@ int main(int argc, char *argv[])
             i++;
         line[i - 1] = '\0';
         i = 0;
-        e = append(line, e);
+        e = newAppend(line, e);
     }
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time1 = diff_in_second(start, end);
@@ -66,21 +72,22 @@ int main(int argc, char *argv[])
     char input[MAX_LAST_NAME_SIZE] = "zyxel";
     e = pHead;
 
-    assert(findName(input, e) &&
+    assert(newFindName(input, e) &&
            "Did you implement findName() in " IMPL "?");
-    assert(0 == strcmp(findName(input, e)->lastName, "zyxel"));
+    assert(0 == strcmp(newFindName(input, e)->lastName, "zyxel"));
 
 #if defined(__GNUC__)
-    __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
+    __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(nameEntry));
 #endif
     /* compute the execution time */
     clock_gettime(CLOCK_REALTIME, &start);
-    findName(input, e);
+    newFindName(input, e);
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time2 = diff_in_second(start, end);
 
     printf("execution time of append() : %lf sec\n", cpu_time1);
     printf("execution time of findName() : %lf sec\n", cpu_time2);
+    printf("pid = %d\n" , getpid());
 
     /* FIXME: release all allocated entries */
     free(pHead);
